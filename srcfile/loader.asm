@@ -70,7 +70,6 @@ Func_Print:
         ret
 LoadMsg: db "Begin to load", 10, 13, 0
 DetectMsg: db "Detecting Memory completed", 10, 13, 0
-ProtectMsg: db "Succeed in entering Protected Mode", 10, 13, 0
 Error:
     mov si, .errmsg
     call Func_Print
@@ -87,8 +86,6 @@ Protect_Mode:
     mov gs, ax
     mov ss, ax
     mov esp, 0x10000; change the stack top
-    mov si, ProtectMsg
-    call Func_Print
 jmp $
 code_selector equ (1 << 3)
 data_selector equ (2 << 3)
