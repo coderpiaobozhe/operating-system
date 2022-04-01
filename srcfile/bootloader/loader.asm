@@ -68,6 +68,7 @@ Func_Print:
     .return:
         pop ax
         ret
+
 LoadMsg: db "Begin to load", 10, 13, 0
 DetectMsg: db "Detecting Memory completed", 10, 13, 0
 Error:
@@ -86,7 +87,79 @@ Protect_Mode:
     mov gs, ax
     mov ss, ax
     mov esp, 0x10000; change the stack top
+
+    mov edi, 0x1000;target memory address
+    mov ecx, 10;tenth sector
+    mov bl, 200;amount of sectors
+    call Func_Read
+    xchg bx, bx
 jmp $
+; LBA Mode
+Func_Read:
+    push ecx
+    push dx
+    push ax
+    ;set the amount of sectors
+    mov dx, 0x1F2
+    mov al, bl
+    out dx, al 
+    ; 0x1F3
+    inc dx
+    mov al, cl
+    out dx, al
+    ; 0x1F4
+    inc dx
+    shr ecx, 8
+    mov al, cl
+    out dx, al
+    ; 0x1F5
+    inc dx
+    shr ecx, 8
+    mov al, cl
+    out dx, al
+    ; 0x1F6
+    inc dx
+    shr ecx, 8
+    mov al, 0b1110_0000
+    and cl, 0b0000_1111
+    or al, cl
+    out dx, al
+    ; 0x1F7(read data from disk)
+    inc dx
+    mov al, 0x20
+    out dx, al 
+
+    xor ecx, ecx
+    mov cl, bl
+    .read:
+        ;check if the disk is ready
+        mov dx, 0x1F7
+        .ready:
+            in al, dx
+            jmp $+2
+            jmp $+2
+            jmp $+2
+            and al, 0b1000_1000
+            cmp al, 0b0000_1000
+            jnz .ready
+        ;read data from the disk
+        mov dx, 0X1F0
+        push cx
+        mov cx, 256 ; one sector contains 256 words
+        .reading:
+            in ax, dx
+            jmp $+2
+            jmp $+2
+            jmp $+2
+            mov [edi], ax
+            add edi, 2
+            loop .reading
+        pop cx
+        loop .read
+    pop ax
+    pop dx
+    pop ecx
+    ret
 code_selector equ (1 << 3)
 data_selector equ (2 << 3)
 memory_base equ 0; memory base address

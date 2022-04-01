@@ -25,8 +25,10 @@ endif
 	dd if=$(BUILD)/system.bin of=$@ bs=512 count=200 seek=10 conv=notrunc
 .PHONY:bochs
 bochs:$(BUILD)/master.img
+	rm -rf bx_enh_dbg.ini
 	bochs -q
 test:$(BUILD)/master.img
 .PHONY:clean
 clean:
 	rm -rf $(BUILD)/*
+	rm bx_enh_dbg.ini
