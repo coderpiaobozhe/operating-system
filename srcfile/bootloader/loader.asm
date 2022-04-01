@@ -68,7 +68,6 @@ Error:
 
 [bits 32]
 Protect_Mode:
-    xchg bx, bx
     mov ax, data_selector
     mov ds, ax
     mov es, ax
@@ -81,9 +80,7 @@ Protect_Mode:
     mov ecx, 10;tenth sector
     mov bl, 200;amount of sectors
     call Func_Read
-    xchg bx, bx
     jmp dword code_selector:0x10000
-jmp $
 ; LBA Mode
 Func_Read:
     push ecx
