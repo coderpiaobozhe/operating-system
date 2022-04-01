@@ -12,7 +12,6 @@ $(BUILD)/system.bin:$(BUILD)/kernel.bin
 	objcopy -O binary $< $@
 $(BUILD)/system.map:$(BUILD)/kernel.bin
 	nm $< | sort > $@
-
 $(BUILD)/master.img:$(BUILD)/boot.bin \
 	$(BUILD)/loader.bin \
 	$(BUILD)/system.bin \
