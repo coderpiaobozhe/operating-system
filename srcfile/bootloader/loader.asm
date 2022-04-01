@@ -42,18 +42,7 @@ Load_Protect_Mode:
     mov eax, cr0; cr0 register has more than 1 bits, we just need to set the zeroth bit.
     or eax, 1
     mov cr0, eax
-    ; jump to flash the memory and to start protect mode
     jmp dword code_selector:Protect_Mode
-;----- show memory
-; mov cx, [ards_count]
-; mov si, 0
-; Loop_ShowMem:
-;     mov eax, [ards_buffer + si]
-;     mov ebx, [ards_buffer + si + 8]
-;     mov edx, [ards_buffer + si + 16]
-;     add si, 20
-;     xchg bx, bx
-;     loop Loop_ShowMem
 
 Func_Print:
     push ax
@@ -88,11 +77,12 @@ Protect_Mode:
     mov ss, ax
     mov esp, 0x10000; change the stack top
 
-    mov edi, 0x1000;target memory address
+    mov edi, 0x10000;target memory address
     mov ecx, 10;tenth sector
     mov bl, 200;amount of sectors
     call Func_Read
     xchg bx, bx
+    jmp dword code_selector:0x10000
 jmp $
 ; LBA Mode
 Func_Read:
@@ -160,6 +150,7 @@ Func_Read:
     pop dx
     pop ecx
     ret
+
 code_selector equ (1 << 3)
 data_selector equ (2 << 3)
 memory_base equ 0; memory base address
