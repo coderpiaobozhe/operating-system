@@ -31,9 +31,6 @@ call Func_Read
 cmp word [0x1000], 0xAA55
 jnz Error
 jmp 0:0x1002
-;----- block
-jmp $
-
 Func_Print:
     push ax
     mov ah, 0xE
