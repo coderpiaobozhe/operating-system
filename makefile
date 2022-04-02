@@ -1,7 +1,7 @@
 BUILD:= ./build
 SRC:= ./srcfile
 SPEC:= build/kernel.bin build/system.bin
-ENTRY:=0X10000
+ENTRY:=0X100000
 $(filter-out $(SPEC), $(BUILD)/%.bin):$(SRC)/bootloader/%.asm
 	nasm $< -o $@
 $(BUILD)/%.o:$(SRC)/kernel/%.asm
