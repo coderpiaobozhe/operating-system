@@ -79,6 +79,7 @@ Protect_Mode:
     mov ecx, 10;tenth sector
     mov bl, 200;amount of sectors
     call Func_Read
+    xchg bx, bx
     jmp dword code_selector:0x10000
 ; LBA Mode
 Func_Read:
@@ -149,27 +150,27 @@ Func_Read:
 
 code_selector equ (1 << 3)
 data_selector equ (2 << 3)
-memory_base equ 0; memory base address
-memory_limit equ ((1024*1024*1024*4)/(1024*4))-1; memory size
+; memory_base equ 0; memory base address
+; memory_limit equ ((1024*1024*1024*4)/(1024*4))-1; memory size
 gdt_ptr:
     dw (gdt_end - gdt_base) - 1
     dd gdt_base
 gdt_base:
     dd 0, 0; NULL discriptor, 8 bytes.
-gdt_code:
-    dw memory_limit & 0xFFFF; memory limit, 0-15 bit
-    dw memory_base & 0xFFFF; base address, 0-15 bit
-    db (memory_base & 0xFF0000) >> 16; base address, 16-23 bit
-    db 0b_1_00_1_1_0_1_0; on memory, dpl = 0, code or data, code, not dependent, can be read, not been visited by cpu yet
-    db 0b_1_1_0_0_0000 | (memory_base >> 16) & 0xF; unit=4k, 32 bit, not 64bit, memory limit(16-19 bit)
-    db (memory_base >> 24) & 0xFF; base address, 24-31 bit
-gdt_data:
-    dw memory_limit & 0xFFFF; memory limit, 0-15 bit
-    dw memory_base & 0xFFFF; base address, 0-15 bit
-    db (memory_base & 0xFF0000) >> 16; base address, 16-23 bit
-    db 0b_1_00_1_0_0_1_0; on memory, dpl = 0, code or data, data, up extension, can be written, not been visited by cpu yet
-    db 0b_1_1_0_0_0000 | (memory_base >> 16) & 0xF; unit=4k, 32 bit, not 64bit, memory limit(16-19 bit)
-    db (memory_base >> 24) & 0xFF; base address, 24-31 bit  
+gdt_code: dd 0x0000FFFF, 0x00C09A00
+    ; dw memory_limit & 0xFFFF; memory limit, 0-15 bit
+    ; dw memory_base & 0xFFFF; base address, 0-15 bit
+    ; db (memory_base & 0xFF0000) >> 16; base address, 16-23 bit
+    ; db 0b_1_00_1_1_0_1_0; on memory, dpl = 0, code or data, code, not dependent, can be read, not been visited by cpu yet
+    ; db 0b_1_1_0_0_0000 | (memory_base >> 16) & 0xF; unit=4k, 32 bit, not 64bit, memory limit(16-19 bit)
+    ; db (memory_base >> 24) & 0xFF; base address, 24-31 bit
+gdt_data: dd 0x0000FFFF, 0x00C09200
+    ; dw memory_limit & 0xFFFF; memory limit, 0-15 bit
+    ; dw memory_base & 0xFFFF; base address, 0-15 bit
+    ; db (memory_base & 0xFF0000) >> 16; base address, 16-23 bit
+    ; db 0b_1_00_1_0_0_1_0; on memory, dpl = 0, code or data, data, up extension, can be written, not been visited by cpu yet
+    ; db 0b_1_1_0_0_0000 | (memory_base >> 16) & 0xF; unit=4k, 32 bit, not 64bit, memory limit(16-19 bit)
+    ; db (memory_base >> 24) & 0xFF; base address, 24-31 bit  
 gdt_end:
 
 ards_count:
