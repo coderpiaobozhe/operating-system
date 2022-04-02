@@ -25,7 +25,6 @@ Loop_DetMem:
     ;finish detecting
     mov si, DetectMsg
     call Func_Print
-jmp Load_Protect_Mode
 Load_Protect_Mode:
     ; open address A20
     push ax
