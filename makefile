@@ -25,7 +25,11 @@ endif
 .PHONY:bochs
 bochs:$(BUILD)/master.img
 	rm -rf bx_enh_dbg.ini
-	bochs -q
+	bochs -q -f bochsrc
+.PHONY:bochsgdb
+bochsgdb:$(BUILD)/master.img
+	rm -rf bx_enh_dbg.ini
+	bochsgdb -q -f bochsrcgdb
 test:$(BUILD)/master.img
 .PHONY:clean
 clean:
